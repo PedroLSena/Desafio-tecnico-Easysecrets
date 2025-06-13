@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 
-export function Header() {
+const Header: React.FC = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -109,4 +109,6 @@ export function Header() {
       )}
     </header>
   );
-}
+};
+
+export default Header;
