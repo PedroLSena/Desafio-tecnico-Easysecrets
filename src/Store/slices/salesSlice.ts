@@ -3,11 +3,37 @@ import { SalesState, SalesData } from '../../Types/sale';
 import { Produto } from '../../Types/produto';
 import mockData from '../../Mock/data.json';
 
+const loadState = (): SalesState | undefined => {
+  try {
+    const serializedState = localStorage.getItem('salesState');
+    if (serializedState === null) {
+      return undefined;
+    }
+    const parsedState = JSON.parse(serializedState) as SalesState;
+
+    parsedState.data = parsedState.data.map(product => ({
+      ...product,
+      id: product.id ? product.id.toString() : Date.now().toString()
+    }));
+    return parsedState;
+  } catch (error) {
+    console.error("Error loading state from localStorage:", error);
+    return undefined;
+  }
+};
+
+const persistedState = loadState();
+
+const initialMockData: SalesData = (mockData as any[]).map(product => ({
+  ...product,
+  id: product.id ? product.id.toString() : Date.now().toString()
+})) as SalesData;
+
 const initialState: SalesState = {
-  data: mockData as SalesData,
-  selectedProducts: ['Refrigerante', 'Suco', 'Salgadinho'],
-  selectedMonths: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
-  chartType: 'line',
+  data: persistedState ? persistedState.data : initialMockData,
+  selectedProducts: persistedState ? persistedState.selectedProducts : ['Refrigerante', 'Suco', 'Salgadinho'],
+  selectedMonths: persistedState ? persistedState.selectedMonths : ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+  chartType: persistedState ? persistedState.chartType : 'line',
   loading: false,
   error: null,
 };
@@ -34,30 +60,40 @@ const salesSlice = createSlice({
       }
     },
     addProduto: (state, action: PayloadAction<Produto>) => {
-      const existingProduct = state.data.find(p => p.produto === action.payload.produto);
+      const newProduct = { ...action.payload };
+      if (!newProduct.id) {
+          newProduct.id = Date.now().toString();
+      }
+      const existingProduct = state.data.find(p => p.id === newProduct.id);
       if (!existingProduct) {
-        state.data.push(action.payload);
-        state.selectedProducts.push(action.payload.produto);
+        state.data.push(newProduct);
+        state.selectedProducts.push(newProduct.produto);
       }
     },
-    updateProduto: (state, action: PayloadAction<{ oldName: string; produto: Produto }>) => {
-      const { oldName, produto } = action.payload;
-      const index = state.data.findIndex(p => p.produto === oldName);
+    updateProduto: (state, action: PayloadAction<Produto>) => {
+      const updatedProduto = action.payload;
+      const index = state.data.findIndex(p => p.id === updatedProduto.id);
       if (index !== -1) {
-        state.data[index] = produto;
+        const oldProdutoName = state.data[index].produto;
+        state.data[index] = updatedProduto;
         
-        if (oldName !== produto.produto) {
-          const selectedIndex = state.selectedProducts.indexOf(oldName);
+        if (oldProdutoName !== updatedProduto.produto) {
+          const selectedIndex = state.selectedProducts.indexOf(oldProdutoName);
           if (selectedIndex !== -1) {
-            state.selectedProducts[selectedIndex] = produto.produto;
+            state.selectedProducts[selectedIndex] = updatedProduto.produto;
           }
         }
       }
     },
     deleteProduto: (state, action: PayloadAction<string>) => {
-      const productName = action.payload;
-      state.data = state.data.filter(p => p.produto !== productName);
-      state.selectedProducts = state.selectedProducts.filter(p => p !== productName);
+      const productId = action.payload;
+      const productToDelete = state.data.find(p => p.id === productId);
+      
+      state.data = state.data.filter(p => p.id !== productId);
+      
+      if (productToDelete) {
+        state.selectedProducts = state.selectedProducts.filter(p => p !== productToDelete.produto);
+      }
     },
   },
 });
