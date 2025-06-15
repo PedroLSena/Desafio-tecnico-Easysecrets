@@ -139,7 +139,6 @@ src/
 
 ### UX/UI
 - Design limpo e responsivo
-- Tema claro/escuro preparado
 - Feedback visual com animações
 - Acessibilidade com Radix UI
 
