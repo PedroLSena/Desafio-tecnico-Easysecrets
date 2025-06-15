@@ -1,16 +1,17 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import salesReducer from './slices/salesSlice';
 import { localStorageMiddleware } from './localStorageMiddleware';
 
-const rootReducer = {
+const rootReducer = combineReducers({
   sales: salesReducer,
-};
+});
 
-export const store:any = configureStore({
+export type RootState = ReturnType<typeof rootReducer>;
+
+export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(localStorageMiddleware),
 });
 
-export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
