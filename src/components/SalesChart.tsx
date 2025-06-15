@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell } from 'recharts';
+import React, { useMemo, useState, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { useAppSelector } from '../Hooks/redux';
 import { Produto } from '../Types/produto';
 import { VendaMensal } from '../Types/vendaMensal';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Carregando } from './LoadingSpinner';
 
 interface EntradaVendasMensais {
   name: string;
@@ -17,6 +18,15 @@ const ordemMeses = [
 
 export const SalesChart: React.FC = () => {
   const { data: produtos, selectedProducts: produtosSelecionados, selectedMonths: mesesSelecionados, chartType: tipoGrafico } = useAppSelector(state => state.sales);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [produtos, produtosSelecionados, mesesSelecionados, tipoGrafico]);
 
   const dadosGrafico = useMemo(() => {
     const mapaVendasMensais: { [key: string]: EntradaVendasMensais } = {};
@@ -174,15 +184,19 @@ export const SalesChart: React.FC = () => {
   return (
     <Card className="group hover:shadow-2xl transition-all duration-500 border-0 bg-card/50 backdrop-blur-sm animate-scale-in">
       <CardHeader className="pb-4">
-        <CardTitle className="text-2xl 0 bg-clip-text ">
+        <CardTitle className="text-xl sm:text-2xl bg-clip-text">
           Análise de Vendas
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[400px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            {renderizarGrafico()}
-          </ResponsiveContainer>
+        <div className="h-[300px] sm:h-[400px] w-full relative">
+          {isLoading ? (
+            <Carregando />
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              {renderizarGrafico()}
+            </ResponsiveContainer>
+          )}
         </div>
       </CardContent>
     </Card>
