@@ -4,22 +4,25 @@ import { Produto } from '../../Types/produto';
 import mockData from '../../Mock/data.json';
 
 const loadState = (): SalesState | undefined => {
-  try {
-    const serializedState = localStorage.getItem('salesState');
-    if (serializedState === null) {
+  if (typeof window !== 'undefined') {
+    try {
+      const serializedState = localStorage.getItem('salesState');
+      if (serializedState === null) {
+        return undefined;
+      }
+      const parsedState = JSON.parse(serializedState) as SalesState;
+
+      parsedState.data = parsedState.data.map(product => ({
+        ...product,
+        id: product.id ? product.id.toString() : Date.now().toString()
+      }));
+      return parsedState;
+    } catch (error) {
+      console.error("Error loading state from localStorage:", error);
       return undefined;
     }
-    const parsedState = JSON.parse(serializedState) as SalesState;
-
-    parsedState.data = parsedState.data.map(product => ({
-      ...product,
-      id: product.id ? product.id.toString() : Date.now().toString()
-    }));
-    return parsedState;
-  } catch (error) {
-    console.error("Error loading state from localStorage:", error);
-    return undefined;
   }
+  return undefined;
 };
 
 const persistedState = loadState();
@@ -48,7 +51,7 @@ const salesSlice = createSlice({
     setSelectedMonths: (state, action: PayloadAction<string[]>) => {
       state.selectedMonths = action.payload;
     },
-    setChartType: (state, action: PayloadAction<'line' | 'bar' | 'area'>) => {
+    setChartType: (state, action: PayloadAction<'line' | 'bar' | 'pie'>) => {
       state.chartType = action.payload;
     },
     toggleProduct: (state, action: PayloadAction<string>) => {

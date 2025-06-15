@@ -1,7 +1,8 @@
-export default function Dashboard(){
-    return(
-        <>
-            <h2>Dash</h2>
-        </>
-    );
+"use client";
+
+import { Dashboard } from "../../components/Dashboard";
+import React from "react";
+
+export default function Page() {
+  return <Dashboard />;
 }
