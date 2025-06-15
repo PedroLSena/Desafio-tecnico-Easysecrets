@@ -1,8 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 const HomeContent = () => {
+  const router = useRouter();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -33,8 +36,18 @@ const HomeContent = () => {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="flex justify-center gap-4 mt-8"
         >
-          <button className="px-6 py-3 border rounded-md shadow-sm hover:bg-gray-50">Dashboard</button>
-          <button className="px-6 py-3 border rounded-md shadow-sm hover:bg-gray-50">Produtos</button>
+          <button 
+            onClick={() => router.push('/dashboard')}
+            className="px-6 py-3 border rounded-md shadow-sm hover:bg-gray-50"
+          >
+            Dashboard
+          </button>
+          <button 
+            onClick={() => router.push('/produtos')}
+            className="px-6 py-3 border rounded-md shadow-sm hover:bg-gray-50"
+          >
+            Produtos
+          </button>
         </motion.div>
       </section>
 
@@ -163,6 +176,7 @@ const HomeContent = () => {
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 2.8 }}
+          onClick={() => router.push('/dashboard')}
           className="px-8 py-4 bg-black text-white rounded-md shadow-lg hover:bg-gray-800"
         >
           Dashboard
