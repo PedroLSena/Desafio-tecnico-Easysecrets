@@ -10,13 +10,22 @@ interface EntradaVendasMensais {
   [key: string]: number | string;
 }
 
+const ordemMeses = [
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+];
+
 export const SalesChart: React.FC = () => {
   const { data: produtos, selectedProducts: produtosSelecionados, selectedMonths: mesesSelecionados, chartType: tipoGrafico } = useAppSelector(state => state.sales);
 
   const dadosGrafico = useMemo(() => {
     const mapaVendasMensais: { [key: string]: EntradaVendasMensais } = {};
 
-    mesesSelecionados.forEach((mes: string) => {
+    const mesesOrdenados = [...mesesSelecionados].sort((a, b) => 
+      ordemMeses.indexOf(a) - ordemMeses.indexOf(b)
+    );
+
+    mesesOrdenados.forEach((mes: string) => {
       mapaVendasMensais[mes] = { name: mes };
       produtosSelecionados.forEach((nomeProduto: string) => {
         mapaVendasMensais[mes][nomeProduto] = 0;
@@ -35,7 +44,7 @@ export const SalesChart: React.FC = () => {
       }
     });
 
-    return Object.values(mapaVendasMensais);
+    return mesesOrdenados.map(mes => mapaVendasMensais[mes]);
   }, [produtos, mesesSelecionados, produtosSelecionados]);
 
   const dadosGraficoPizza = useMemo(() => {
