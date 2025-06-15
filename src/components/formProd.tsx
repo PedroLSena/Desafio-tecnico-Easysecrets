@@ -44,15 +44,24 @@ export const ProductForm: React.FC<ProductFormProps> = ({ produto, onClose }) =>
     onClose();
   };
 
-  const handleVendaChange = (mesIndex: number, quantidade: number) => {
-    const newVendas = [...formData.vendas];
-    newVendas[mesIndex].quantidade = Math.max(0, quantidade);
+  const handleVendaChange = (mesIndex: number, quantidade: string) => {
+    const newVendas = formData.vendas.map((venda, index) => {
+      if (index === mesIndex) {
+        const parsedQuantidade = quantidade === '' ? 0 : Math.max(0, parseFloat(quantidade));
+        return { ...venda, quantidade: parsedQuantidade };
+      }
+      return venda;
+    });
     setFormData({ ...formData, vendas: newVendas });
   };
 
   const handleMesNameChange = (mesIndex: number, novoNome: string) => {
-    const newVendas = [...formData.vendas];
-    newVendas[mesIndex].mes = novoNome;
+    const newVendas = formData.vendas.map((venda, index) => {
+      if (index === mesIndex) {
+        return { ...venda, mes: novoNome };
+      }
+      return venda;
+    });
     setFormData({ ...formData, vendas: newVendas });
   };
 
@@ -130,9 +139,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({ produto, onClose }) =>
                   id={`venda-${index}`}
                   type="number"
                   min="0"
-                  step="any"
-                  value={venda.quantidade}
-                  onChange={(e) => handleVendaChange(index, parseFloat(e.target.value) || 0)}
+                  step="0.01"
+                  value={venda.quantidade === 0 ? '' : venda.quantidade}
+                  onChange={(e) => handleVendaChange(index, e.target.value)}
+                  className="w-full"
+                  placeholder="Digite a quantidade"
                 />
               </div>
             </div>
