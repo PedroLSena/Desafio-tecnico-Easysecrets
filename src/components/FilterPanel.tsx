@@ -57,7 +57,7 @@ export const FilterPanel: React.FC = () => {
           </button>
           <button
             className={`px-4 py-2 rounded-md text-sm font-medium ${
-              tipoGrafico === 'bar' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              tipoGrafico === 'bar' ? 'bg-black text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
             onClick={() => handleChartTypeChange('bar')}
           >
@@ -65,7 +65,7 @@ export const FilterPanel: React.FC = () => {
           </button>
           <button
             className={`px-4 py-2 rounded-md text-sm font-medium ${
-              tipoGrafico === 'pie' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              tipoGrafico === 'pie' ? 'bg-black text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
             onClick={() => handleChartTypeChange('pie')}
           >
