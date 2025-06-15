@@ -6,7 +6,7 @@ export interface SalesState {
   data: SalesData;
   selectedProducts: string[];
   selectedMonths: string[];
-  chartType: 'line' | 'bar' | 'area';
+  chartType: 'line' | 'bar' | 'pie';
   loading: boolean;
   error: string | null;
 }
@@ -16,4 +16,5 @@ export interface SalesMetrics {
   vendaMensal: number;
   crescimento: number;
   melhorProduto: string;
+  piorProduto: string;
 }
