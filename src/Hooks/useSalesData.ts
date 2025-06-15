@@ -42,11 +42,14 @@ export const useSalesMetrics = (): SalesMetrics => {
 
     const melhorProduto = vendasPorProduto.sort((a: { nome: string; total: number }, b: { nome: string; total: number }) => b.total - a.total)[0]?.nome || '';
 
+    const piorProduto = vendasPorProduto.sort((a: { nome: string; total: number }, b: { nome: string; total: number }) => a.total - b.total)[0]?.nome || '';
+
     return {
       totalVendas,
       vendaMensal: Math.round(vendaMensal),
       crescimento: Math.round(crescimento * 100) / 100,
       melhorProduto,
+      piorProduto,
     };
   }, [data, selectedProducts, selectedMonths]);
 };
