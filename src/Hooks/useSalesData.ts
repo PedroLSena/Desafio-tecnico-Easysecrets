@@ -18,7 +18,7 @@ export const useSalesMetrics = (): SalesMetrics => {
         .reduce((sum: number, venda: VendaMensal) => sum + venda.quantidade, 0);
     }, 0);
 
-    const vendaMensal = totalVendas / selectedMonths.length;
+    const vendaMensal = selectedMonths.length > 0 ? totalVendas / selectedMonths.length : 0;
 
     const primeiroPeriodo = filteredData.reduce((sum: number, produto: Produto) => {
       const primeiroMes = produto.vendas.find((v: VendaMensal) => selectedMonths.includes(v.mes));
@@ -45,8 +45,8 @@ export const useSalesMetrics = (): SalesMetrics => {
     const piorProduto = vendasPorProduto.sort((a: { nome: string; total: number }, b: { nome: string; total: number }) => a.total - b.total)[0]?.nome || '';
 
     return {
-      totalVendas,
-      vendaMensal: Math.round(vendaMensal),
+      totalVendas: Math.floor(totalVendas),
+      vendaMensal: Math.floor(vendaMensal),
       crescimento: Math.round(crescimento * 100) / 100,
       melhorProduto,
       piorProduto,

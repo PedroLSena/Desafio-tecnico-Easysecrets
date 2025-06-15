@@ -2,50 +2,82 @@
 
 import React from 'react';
 import { useEffect, useState } from 'react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
-interface PropsMetrica {
+interface MetricCardProps {
   title: string;
-  value: number | string;
-  color: string;
+  value: string | number;
   trend?: number;
+  color?: string;
 }
 
-export const MetricCard: React.FC<PropsMetrica> = ({
-  title,
-  value,
-  color,
-  trend,
-}) => {
-  const [valorExibido, setValorExibido] = useState<string>('');
+export const MetricCard: React.FC<MetricCardProps> = ({ title, value, trend, color = 'bg-black' }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {    if (typeof value === 'number') {
-      setValorExibido(value.toLocaleString('pt-BR'));
-    } else {
-      setValorExibido(value);
-    }
-  }, [value]);
+  useEffect(() => {
+    setMounted(true);
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const isPositive = trend && trend > 0;
   const isNegative = trend && trend < 0;
 
-  return (
-    <div className={`relative p-6 rounded-lg shadow-lg overflow-hidden bg-gradient-to-br ${color} text-white transform hover:scale-105 transition-all duration-300 ease-in-out`}>
-      <div className="flex flex-col items-center justify-center space-y-2">
-        <div className="text-white opacity-75">
-        </div>
-        <h3 className="text-lg font-semibold opacity-90 text-center">{title}</h3>
-        <p className="text-4xl font-bold text-center">
-          {valorExibido || (typeof value === 'number' ? value.toString() : value)}
-        </p>
+  const formatValue = (val: string | number) => {
+    if (typeof val === 'number') {
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'decimal',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+        useGrouping: true
+      }).format(val);
+    }
+    return val;
+  };
+
+  const renderTrendIcon = () => {
+    if (!mounted) return null;
+    
+    if (trend === undefined) return null;
+
+    const Icon = trend >= 0 ? TrendingUp : TrendingDown;
+    const colorClass = trend >= 0 ? 'text-green-300' : 'text-red-300';
+
+    return (
+      <div className={`flex items-center ${colorClass}`}>
+        <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
       </div>
-      {trend !== undefined && (
-        <div className={`mt-4 text-sm font-medium flex items-center justify-center ${
-            isPositive ? 'text-green-200' :
-            isNegative ? 'text-red-200' :
-            'text-gray-200'
-        }`}>
-        </div>
-      )}
+    );
+  };
+
+  return (
+    <div 
+      className={`
+        ${color} 
+        rounded-lg 
+        shadow-md 
+        p-4 
+        sm:p-6 
+        border 
+        border-gray-100 
+        transform 
+        transition-all 
+        duration-500 
+        hover:scale-105 
+        hover:shadow-xl
+        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
+      `}
+    >
+      <h3 className="text-sm sm:text-base font-medium text-white mb-2">{title}</h3>
+      <div className="flex items-center justify-between">
+        <p className="text-xl sm:text-2xl font-bold text-white">
+          {mounted ? formatValue(value) : '...'}
+        </p>
+        {renderTrendIcon()}
+      </div>
     </div>
   );
 }; 

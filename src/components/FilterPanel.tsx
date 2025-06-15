@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../Hooks/redux';
 import { setSelectedProducts, setSelectedMonths, setChartType } from '../Store/slices/salesSlice';
 import { Checkbox } from './ui/checkbox';
@@ -9,6 +9,11 @@ import { Produto } from '../Types/produto';
 export const FilterPanel: React.FC = () => {
   const dispatch = useAppDispatch();
   const { data: produtos, selectedProducts: produtosSelecionados, selectedMonths: mesesSelecionados, chartType: tipoGrafico } = useAppSelector(state => state.sales);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const produtosDisponiveis = useMemo((): string[] => {
     const todosProdutos = produtos.map((p: Produto) => p.produto);
@@ -40,15 +45,19 @@ export const FilterPanel: React.FC = () => {
     dispatch(setChartType(tipo));
   };
 
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-center text-xl font-semibold mb-4">Filtrar Dados</h2>
+    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+      <h2 className="text-center text-lg sm:text-xl font-semibold mb-4">Filtrar Dados</h2>
 
       <div className="mb-6">
-        <h3 className="text-lg font-medium mb-3">Tipo de Gráfico</h3>
-        <div className="flex space-x-2">
+        <h3 className="text-base sm:text-lg font-medium mb-3">Tipo de Gráfico</h3>
+        <div className="flex flex-wrap gap-2">
           <button
-            className={`px-4 py-2 rounded-md text-sm font-medium ${
+            className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium ${
               tipoGrafico === 'line' ? 'bg-black text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
             onClick={() => handleChartTypeChange('line')}
@@ -56,7 +65,7 @@ export const FilterPanel: React.FC = () => {
             Linha
           </button>
           <button
-            className={`px-4 py-2 rounded-md text-sm font-medium ${
+            className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium ${
               tipoGrafico === 'bar' ? 'bg-black text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
             onClick={() => handleChartTypeChange('bar')}
@@ -64,7 +73,7 @@ export const FilterPanel: React.FC = () => {
             Barra
           </button>
           <button
-            className={`px-4 py-2 rounded-md text-sm font-medium ${
+            className={`px-3 sm:px-4 py-2 rounded-md text-sm font-medium ${
               tipoGrafico === 'pie' ? 'bg-black text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
             onClick={() => handleChartTypeChange('pie')}
@@ -74,10 +83,10 @@ export const FilterPanel: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row md:space-x-8">
-        <div className="mb-6 md:mb-0 md:w-2/3">
-          <h3 className="text-lg font-medium mb-3">Produtos</h3>
-          <div className="grid grid-cols-2 gap-2">
+      <div className="flex flex-col lg:flex-row lg:space-x-8">
+        <div className="mb-6 lg:mb-0 lg:w-2/3">
+          <h3 className="text-base sm:text-lg font-medium mb-3">Produtos</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {produtosDisponiveis.map(produto => (
               <div key={produto} className="flex items-center space-x-2">
                 <Checkbox
@@ -93,13 +102,13 @@ export const FilterPanel: React.FC = () => {
           </div>
         </div>
 
-        <div className="hidden md:flex items-center justify-center">
+        <div className="hidden lg:flex items-center justify-center">
           <div className="h-full w-px bg-gray-200"></div>
         </div>
 
-        <div className="md:w-1/3">
-          <h3 className="text-lg font-medium mb-3">Meses</h3>
-          <div className="grid grid-cols-2 gap-2">
+        <div className="lg:w-1/3">
+          <h3 className="text-base sm:text-lg font-medium mb-3">Meses</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2">
             {mesesDisponiveis.map(mes => (
               <div key={mes} className="flex items-center space-x-2">
                 <Checkbox

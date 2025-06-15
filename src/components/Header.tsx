@@ -1,18 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon } from "lucide-react";
-import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 
 const Header: React.FC = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
   
   const navItems = [
     { path: '/', label: 'Início' },
@@ -84,21 +80,8 @@ const Header: React.FC = () => {
               <line x1="4" x2="20" y1="18" y2="18" />
             </svg>
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-          >
-            {theme === "light" ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
-            <span className="sr-only">Toggle theme</span>
-          </Button>
         </div>
       </div>
-
       {isOpen && (
         <div className="md:hidden">
           <nav className="container mx-auto px-4 py-2 space-y-1">

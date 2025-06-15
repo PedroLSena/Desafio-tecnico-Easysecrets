@@ -11,11 +11,6 @@ const loadState = (): SalesState | undefined => {
         return undefined;
       }
       const parsedState = JSON.parse(serializedState) as SalesState;
-
-      parsedState.data = parsedState.data.map(product => ({
-        ...product,
-        id: product.id ? product.id.toString() : Date.now().toString()
-      }));
       return parsedState;
     } catch (error) {
       console.error("Error loading state from localStorage:", error);
@@ -29,7 +24,7 @@ const persistedState = loadState();
 
 const initialMockData: SalesData = (mockData as any[]).map(product => ({
   ...product,
-  id: product.id ? product.id.toString() : Date.now().toString()
+  id: product.id.toString()
 })) as SalesData;
 
 const initialState: SalesState = {

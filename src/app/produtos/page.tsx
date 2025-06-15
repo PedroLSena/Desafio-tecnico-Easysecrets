@@ -1,8 +1,12 @@
 "use client";
 
 import dynamic from 'next/dynamic';
+import { Carregando } from '../../components/LoadingSpinner';
 
-const ProductsTable = dynamic(() => import('../../components/ProductsTable'), { ssr: false });
+const ProductsTable = dynamic(() => import('../../components/ProductsTable'), { 
+  ssr: false,
+  loading: () => <Carregando />
+});
 
 export default function ProdutosPage() {
   return (
